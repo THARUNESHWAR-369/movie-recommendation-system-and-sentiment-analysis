@@ -51,7 +51,9 @@ def home():
     return render_template('home.html',error=__ERROR, movieNamesList=__MOVIE_NAME_LIST, status=__STATUS, topSearch=__TOP_SEARCH)
 
 
-
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
 
 """
 from flask import Blueprint
