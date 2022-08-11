@@ -11,7 +11,7 @@ app = Flask(__name__)
 __UTILS = UTILS()
 
 
-@__MRS.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def home():
     
     # Get all Movie names
