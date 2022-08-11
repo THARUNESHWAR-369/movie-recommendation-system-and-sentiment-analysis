@@ -3,7 +3,7 @@ from flask import render_template
 from flask import request
 
 # import from constant
-from .constants.utils import UTILS
+from constants.utils import UTILS
 
 # Initialize app
 app = Flask(__name__)

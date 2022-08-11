@@ -68,7 +68,7 @@
     <!--  End Navbar  -->
 
     <!--  Search bar  -->
-    <div class="search-bar">
+    <div class="search-bar" id="search-bar">
         <div class="serach-bar-container">
             <div class="input-filed">
                 <input id="search-movie" type="text" placeholder="Search movie">
@@ -85,6 +85,13 @@
     
     <div class="movie-is-loaded" id="movie-is-loaded" style="display: none;">
         <!--  If movie available  -->
+
+        
+        <div class="slider">
+            <div class="slider-container" id="slider-container">
+                <a href="#recommend-movie" id="slider"><i class="fa fa-arrow-down"></i></a>
+            </div>
+        </div>
         
         <div class="add-hr">
         </div>
@@ -211,6 +218,22 @@
                 let modal_popup_container = document.getElementById('cast-modal-popup-container');
             });
         }
+
+        $('#slider-container').on('click', function(e) {
+            e.preventDefault();
+            console.log($("#slider").attr('href'))
+            if ($("#slider").attr('href') == "#recommend-movie") {
+                $('html, body').animate({ scrollTop: $($("#slider").attr('href')).offset().top}, 1000, 'linear');
+                $("#slider").attr('href', '#search-bar');
+                $("#slider").html(`<i class="fa fa-arrow-up"></i>`);
+            }
+            else {
+                $('html, body').animate({ scrollTop: $($("#slider").attr('href')).scrollTop()}, 1000, 'linear');
+                $("#slider").attr('href', '#recommend-movie');
+                $("#slider").html(`<i class="fa fa-arrow-down"></i>`);
+            }
+            
+        });
 
         function postMovie(movie_name){
             $("#errorTag").css('display', 'none'); 
