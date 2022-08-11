@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Flask
 from flask import render_template
 from flask import request
 
@@ -6,7 +6,7 @@ from flask import request
 from .constants.utils import UTILS
 
 # Initialize app
-__MRS = Blueprint("/", __name__) #url_prefix=""
+app = Flask(__name__)
 
 __UTILS = UTILS()
 
