@@ -124,7 +124,7 @@ class MOVIE_DB:
     
     def __FetchMovieDetails(self, id) -> None:
                 
-        movie_result = requests.get(URLS.MOVIE_DETAIL_URL.value.format(id, os.environ.get("IMDB_API_KEY")))
+        movie_result = requests.get(URLS.MOVIE_DETAIL_URL.value.format(id, "0935d725e4cae2bf1acd010b067db66e"))
         #print(movie_result.json())
         if movie_result:
             result_movie_details = movie_result.json()
@@ -141,13 +141,13 @@ class MOVIE_DB:
 
     def __FetchCastDetails(self, id) -> None:
         __CAST_COUNT = 0
-        movie_cast_result = requests.get(URLS.MOVIE_CAST_URL.value.format(id, os.environ.get("IMDB_API_KEY")))
+        movie_cast_result = requests.get(URLS.MOVIE_CAST_URL.value.format(id, "0935d725e4cae2bf1acd010b067db66e"))
         if movie_cast_result:
             #print("movie_cast_result: ",movie_cast_result)
             result_movie_cast = movie_cast_result.json()['cast'][:self.__MAX_CAST + __CAST_COUNT]
             for cast_details in result_movie_cast:
                 character_cast_dict = {"character":cast_details['character']}
-                cast_details = requests.get(URLS.INDIVIDUAL_CAST_URL.value.format(cast_details['id'], os.environ.get("IMDB_API_KEY")))
+                cast_details = requests.get(URLS.INDIVIDUAL_CAST_URL.value.format(cast_details['id'], "0935d725e4cae2bf1acd010b067db66e"))
                 individual_cast_details = cast_details.json()
 
                 #print("\n\nindividual_cast_details: ",individual_cast_details)
@@ -163,7 +163,7 @@ class MOVIE_DB:
                 
     def __FetchRecomMovieDetails(self, id) -> None:
 
-        recom_movie_result = requests.get(URLS.MOVIE_DETAIL_URL.value.format(id, os.environ.get("IMDB_API_KEY")))
+        recom_movie_result = requests.get(URLS.MOVIE_DETAIL_URL.value.format(id, "0935d725e4cae2bf1acd010b067db66e"))
         if recom_movie_result:
             result_recom_movie_details = recom_movie_result.json()
             print("result_recom_movie_details: ",result_recom_movie_details)
@@ -175,7 +175,7 @@ class MOVIE_DB:
                         self.__MAP_RECOM_MOVIE_DATA[recom_movie_keys] = result_recom_movie_details[recom_movie_keys]
 
     def getMovieDetails(self, isRecomdMovie=False) -> list:
-        result = self.__TMDB_MOVIE.search(self.__MOVIE_NAME)
+        result = self.__TMDB_MOVIE.search(self.__MOVIE_NAME, )
         print(result)
         if result:
             result_details = result[0]
