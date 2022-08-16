@@ -175,7 +175,7 @@ class MOVIE_DB:
                         self.__MAP_RECOM_MOVIE_DATA[recom_movie_keys] = result_recom_movie_details[recom_movie_keys]
 
     def getMovieDetails(self, isRecomdMovie=False) -> list:
-        result = self.__TMDB_MOVIE.search(self.__MOVIE_NAME, )
+        result = self.__TMDB_MOVIE.search(self.__MOVIE_NAME)
         print(result)
         if result:
             result_details = result[0]
