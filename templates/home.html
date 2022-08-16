@@ -23,6 +23,20 @@
 </head>
 <body>
 
+    <!--  Download modal-popup  -->
+    <div class="download-modal-popup" id="download-modal-popup" style="display: none;">
+        <div class="download-modal-popup-container">
+            <div class="download-modal-popup-header">
+                <p id="download-modal-movie-name"></p>
+                <span id="closeDownloadeModalPopup">X</span>
+            </div>
+            <div class="download-modal-popup-content" id="download-modal-popup-content">
+                
+            </div>
+        </div>
+    </div>
+    <!--  end Download modal-popup  -->
+
     <!--  Movie details modal popup -->
     <div class="modal-popup" id="modal-popup" style="display: none;">
         <div class="modal-popup-container" id="modal-popup-container">
@@ -71,7 +85,7 @@
     <div class="search-bar" id="search-bar">
         <div class="serach-bar-container">
             <div class="input-filed">
-                <input id="search-movie" type="text" placeholder="Search movie">
+                <input id="search-movie" type="text" placeholder="Search movie" autocomplete="off">
             </div>
             <p id="errorTag" style="display: none;"></p>
             <div class="search-button">
@@ -80,6 +94,20 @@
         </div>
     </div>
     <!-- End Search bar -->
+
+
+    <!--  Top Search  -->
+    <div class="top-search" id="top-search">
+        <div class="top-search-container">
+            <p>Search <i class="fa fa-search"></i></p>
+            <div class="top-search-container-span">
+                {% for ts in topSearch %}
+                    <span onclick="postMovie('{{ts}}')"><p>{{ ts }}</p></span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- End of top search -->
     
     <!--  If movie name is present  -->
     
@@ -89,7 +117,8 @@
         
         <div class="slider">
             <div class="slider-container" id="slider-container">
-                <a href="#recommend-movie" id="slider"><i class="fa fa-arrow-down"></i></a>
+                <button id="scrollToTopBtn"  style="display: none;"><i class="fa fa-angles-up"></i></button>
+                <button id="scrollToBottomBtn"><i class="fa fa-angles-down"></i></button>
             </div>
         </div>
         
@@ -116,14 +145,18 @@
                 </div>
             </div>
         </div>
-        <!-- end movie available-->
 
+        <div class="download-btn-container">
+            <button class="download-btn" id="download-movie-btn">Download</button>
+        </div>
+        <!-- end movie available-->
         
         <div class="add-hr">
         </div>
 
         <!--  Movie Casts  -->
-        <div class="movie-cast" id="movie-cast">
+        <div class="movie-cast" data-nr="0" id="movie-cast">
+            
             <div class="movie-cast-container" id="movie-cast-container">
                 <div class="movie-cast-header">
                     <p>Top cast</p>
@@ -140,18 +173,25 @@
         </div>
 
         <!-- Movie reviews -->
-        <div class="movie-reviews">
+        <div data-nr="1" class="movie-reviews">
+            
             <div class="movie-reviews-container">
                 <div class="movie-reviews-header">
                     <p>Movie reviews</p>
                 </div>
                 <div class="movie-reviews-content">
+                    
                     <div class="movie-reviews-table">
                         <table class="movie-reviews-table-obj">
-                            <tbody id="review-tbody">
+                            
+                            <tbody id="review-tbody" class="loading">
                                 <tr id="col-title">
                                     <th>REVIEWS</th>
                                     <th>SENTIMENT</th>
+                                </tr>
+                                <tr id="removeTr" class="loading">
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -173,7 +213,6 @@
                 </div>
                 <div class="recommend-movie-content">
                     <div class="recommend-movie-cards-row" id="recommend-movie-cards-row">
-                        
                     </div>
                 </div>
             </div>
@@ -210,6 +249,7 @@
         let movieData = null;
         let castData = null;
         let reviewData = null;
+        let firedEvents = [];
 
         function closeCastModalPopup(title) {
             $("#closeCastDetailsModalPopup-"+title).click(()=>{
@@ -219,91 +259,180 @@
             });
         }
 
-        $('#slider-container').on('click', function(e) {
-            e.preventDefault();
-            console.log($("#slider").attr('href'))
-            if ($("#slider").attr('href') == "#recommend-movie") {
-                $('html, body').animate({ scrollTop: $($("#slider").attr('href')).offset().top}, 1000, 'linear');
-                $("#slider").attr('href', '#search-bar');
-                $("#slider").html(`<i class="fa fa-arrow-up"></i>`);
-            }
-            else {
-                $('html, body').animate({ scrollTop: $($("#slider").attr('href')).scrollTop()}, 1000, 'linear');
-                $("#slider").attr('href', '#recommend-movie');
-                $("#slider").html(`<i class="fa fa-arrow-down"></i>`);
-            }
+
+
+        $(window).scroll(function() {
+            $("div.movie-cast").each(function() {
+            // console.log(!firedEvents.includes(this), $(window).scrollTop(), $(this).offset().bottom)
+                if (!firedEvents.includes(this) && $(window).scrollTop() > $(this).offset().top) {
+                firedEvents.push(this);
+                $("#col-title").show()
+                $.ajax({
+                    type: "post",
+                    url: "/getMovieReviews",
+                    data: {"movie_imdb_id":movieData['imdb_id']},
+                    dataType: "json",
+                    success: function (data) {
+                        $("#loader").fadeOut();
+                        $("#removeTR").hide()
+                        console.log(data)
+                        if (data['status'] == true) {
             
+                            //*  Reviews *
+                            showReviews(data['reviews-details']);
+            
+                        }
+                        else {
+                            console.log("no reviews")
+                            $("#removeTR").show()
+                        }
+                        }
+                    });
+                }
+            });
+            console.log(firedEvents)
+            $("div.movie-reviews").each(function() {
+                    if (!firedEvents.includes(this) && $(window).scrollTop() > $(this).offset().top) {
+                    firedEvents.push(this);
+                    console.log(movieData)
+
+                    $.ajax({
+                        type: "post",
+                        url: "/getRecommendedMovies",
+                        data: {"movie-name":movieData['title']},
+                        dataType: "json",
+                        success: function (data) {
+                            $("#loader").fadeOut()
+                            console.log(data)
+                            if (data['status'] == true) {
+                                showRecommendMoviesCards(data['recommend-movies'])                
+                            }
+                            else {
+                                movieData = {};
+                                castData = {};
+                                reviewData = {};
+
+                            }
+                            }
+                        });
+                    }
+                });
+
         });
+
 
         function postMovie(movie_name){
             $("#errorTag").css('display', 'none'); 
             $("#loader").fadeIn();
+            $("#movie_list").hide();
+            $("#movie-card").css('display', 'block')
+            
 
             $.ajax({
                 type: "post",
-                url: "/",
+                url: "/getMovieDetails",
                 data: {"movie-name":movie_name},
                 dataType: "json",
                 success: function (data) {
+                    $("#loader").fadeOut();
+                    $("#movie-card").css('display', 'block')
                     console.log(data)
                     if (data['status'] == true) {
+
                         // Null the variables
+
                         movieData = {};
                         castData = {};
                         reviewData = {};
-
+                        firedEvents = [];
                         document.getElementById('cast-modal-popup-container').innerHTML = "";
                         document.getElementById('recommend-movie-cards-row').innerHTML = "";
                         document.getElementById('movie-cast-cards-row').innerHTML = "";
                         document.getElementById('review-tbody').innerHTML = "";
+
+                        document.getElementById('recommend-movie-cards-row').innerHTML = `
+                        <div class="movie-center">
+                            <div class="recommend-movie-card">
+                                <div class="recommend-movie-card-container loader-movie">
+                                    <div class="recommend-movie-card-header">
+                                        <div class="recommend-movie-card-i"><span id="recommend-movie-span-one">
+                                                <p><i class="fa fa-star"></i>0.0/10</p>
+                                            </span>
+                                            <p id="recommend-movie-span-two"></p>
+                                        </div>
+                                    </div>
+                                    <div class="recommend-movie-card-content loader-movie">
+                                        <div class="recommend-movie-card-image"><img class="movie-cast-poster"></div>
+                                        <div class="recommend-movie-card-btn"><button title=""><i class="fa fa-search"></i> Search</button></div>
+                                    </div>
+                                    <div class="recommend-movie-card-footer"><span>0000-00-00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+
+                        document.getElementById('review-tbody').innerHTML = `<tr id="col-title">
+                            <th>REVIEWS</th>
+                            <th>SENTIMENT</th>
+                        </tr>
+                        <tr class="loading" id="removeTR">
+                            <td></td>
+                            <td></td>
+                        </tr>`;
+
+                        // Hide top search
+                        $("#top-search").hide();
+
                         $("#search-movie").val(movie_name);
-                        //$("#modal-popup").css('display', 'block'); 
                         $("#movie-is-loaded").css('display', 'block');
+                        $("#movie-card").css('display', 'block');
                         $("#errorTag").css('display', 'none'); 
 
-                        /** Movie details */
+                        //* Movie details 
                         $("#movie-name").text(data['movie-details']['title']);
                         $("#movie-poster-img").attr('src', data['movie-details']['poster_path'])
 
-                        /* Movie Details modal popup */
+                        //* Movie Details modal popup 
                         movieData = data['movie-details'];
                         castData = data['cast-details']; 
-
-                        /* show Cast card */
+                        
+                        //* show Cast card
                         showCastCards(castData);
 
-                        /*  Reviews */
-                        showReviews(data['reviews-details']);
-
-                        /* Recommend movies  */
-                        showRecommendMoviesCards(data['recommend-movies']);
                     }
                     else {
-                        $("#loader").fadeOut()
-                        $("#movie-is-loaded").css('display', 'none');
-                        $("#errorTag").css('display', 'block'); 
-                        $("#errorTag").text(" *Movie not found in our database...")
-                        movieData = {};
+                         // show top search
+                         console.log("Not fond")
+                         $("#top-search").show();
+                         $("#errorTag").css('display', 'block'); 
+                         $("#errorTag").text("*"+movie_name+" Movie not found in our database.."); 
+                         movieData = {};
                         castData = {};
                         reviewData = {};
 
-                        document.getElementById('cast-modal-popup-container').innerHTML = "";
+                        $("#loader").fadeOut();
+
+
+                         document.getElementById('cast-modal-popup-container').innerHTML = "";
                         document.getElementById('recommend-movie-cards-row').innerHTML = "";
                         document.getElementById('movie-cast-cards-row').innerHTML = "";
-                    }
-                    $("#loader").fadeOut()
-                },
-                error: (er)=>{
-                    $("#loader").fadeOut()
-                }
+                        document.getElementById('review-tbody').innerHTML = "";
 
+                        $(".movie-card").hide();
+                    }
+                }
             });
+
         }
+     
 
         function showRecommendMoviesCards(recommend_movies) {
 
             recommend_movie_cards_row = document.getElementById("recommend-movie-cards-row");
+            recommend_movie_cards_row.innerHTML = "";
             //$("#recommend-movie-cards-row").remove();
+            $(".recommend-movie-card-container").removeClass('loader-movie');
+            $(".recommend-movie-card-contant").removeClass('loader-movie');
 
             for (var i=0; recommend_movies.length > i; i++) {
 
@@ -392,16 +521,7 @@
             //console.log(reviews);
             let review_tbody = document.getElementById('review-tbody');
 
-            let tr_col = document.createElement('tr');
-
-            tr_col.id = "col-title";
-
-            let th_col_title = document.createElement('th');
-
-            tr_col.appendChild(th_col_title);
-
-            review_tbody.appendChild(tr_col);
-
+            
 
             for (var key in reviews) {
                 let tr = document.createElement('tr');
@@ -500,7 +620,6 @@
                 b1.textContent = cast_modal_popup_keys[i]+": ";
 
                 cast_modal_popup_container_title.onclick = closeCastModalPopup(title);
-
                 if (castData[cast_id][cast_modal_popup_keys[i]] == null) {
                     b2.textContent = 'None';
                 }else if (castData[i][cast_modal_popup_keys[i]] != null){
@@ -622,6 +741,74 @@
             $("#cast-modal-popup").css('display', 'none');
         });
 
+        $("#download-modal-popup").click(()=>{
+            $("#download-modal-popup").css('display', 'none');
+        });
+
+        $("#download-movie-btn").click(function(e){
+            $("#download-modal-popup").css('display', 'block');
+            
+            $("#download-modal-movie-name").text(movieData['title']);
+            $.ajax({
+                type: "post",
+                url: "getTorrents",
+                data: {"movie-name":movieData['title']},
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+      
+                    let download_modal_popup_links = document.createElement('div');
+                    download_modal_popup_links.id = "download-modal-popup-links";
+                    download_modal_popup_links.classList.add("download-modal-popup-links");
+
+                    if (data['status']==true) {
+                        let download_modal_filename = document.createElement('div');
+                        let download_modal_filename_p = document.createElement('p')
+
+                        let download_modal_filesize = document.createElement('div');
+                        let download_modal_filesize_p = document.createElement('p');
+
+                        let download_modal_magnetic_link = document.createElement('div');
+                        let download_modal_magnetic_link_a = document.createElement('a');
+
+                        download_modal_filename.classList.add("download-modal-filename");
+                        //download_modal_filename_p.classList.add("download-modal-filename");
+
+                        download_modal_filesize.classList.add("download-modal-filesize");
+                        //download_modal_filesize_p.classList.add("download-modal-filesize");
+
+                        download_modal_magnetic_link.classList.add("download-modal-magnetic-link");
+                        //download_modal_magnetic_link_a.classList.add("download-torrent-link");
+
+                        download_modal_filename_p.innerHTML = data['torrent-title'];
+                        download_modal_filesize_p.innerHTML = data['torrent-filesize'];
+                        download_modal_magnetic_link_a.href = data['torrent-magnetlink'];
+                        download_modal_magnetic_link_a.textContent = "magnetic link";
+                        download_modal_magnetic_link_a.target = "_blank";
+
+                        download_modal_filename.append(download_modal_filename_p);
+                        download_modal_filesize.append(download_modal_filesize_p);
+                        download_modal_magnetic_link.append(download_modal_magnetic_link_a);
+
+                        download_modal_popup_links.appendChild(download_modal_filename);
+                        download_modal_popup_links.appendChild(download_modal_filesize);
+                        download_modal_popup_links.appendChild(download_modal_magnetic_link);
+
+                        document.getElementById('download-modal-popup-content').appendChild(download_modal_popup_links);
+                    }
+                    else {
+                        // no torrent
+                        let download_modal_popup_links_p = document.createElement('p');
+
+                        download_modal_popup_links_p.textContent = data['error-msg']
+
+                        //download_modal_popup_links.appendChild(download_modal_popup_links_p);
+                        document.getElementById('download-modal-popup-content').appendChild(download_modal_popup_links);
+                    }
+                }
+            });
+        });
+
         
         $("#openModalPopup").click(()=>{
             $("#modal-popup").css('display', 'block');
@@ -632,6 +819,6 @@
         });
     </script>
 
-
+    <script src="{{ url_for('static', filename='js/scrollBtn.js') }}"></script>
 </body>
 </html>

@@ -15,6 +15,7 @@ body {
     background: var(--primary-bg);
     font-family: monospace;
     letter-spacing: 3px;
+    overflow-x: hidden;
 }
 
 .navbar {
@@ -103,6 +104,7 @@ body {
     letter-spacing: 3px;
     cursor: pointer;
     box-shadow: 0px 0px 20px 0px #f7542f8c;
+    margin-top: 10px;
 }
 
 .add-hr {
@@ -123,6 +125,7 @@ body {
 .movie-card {
     height: 450px;
     transition: .5s ease;
+    padding: 10px;
 }
 
 .movie-card-container {
@@ -524,6 +527,7 @@ div.movie-cast-card-container:hover > div.movie-cast-card-btn {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .movie-reviews-table-obj {
@@ -972,7 +976,7 @@ div.recommend-movie-card-content:hover {
     Modal popup
 */
 
-.modal-popup {
+.modal-popup, .download-modal-popup {
     position: fixed;
     padding-top: 5%;
     left: 0;
@@ -984,7 +988,7 @@ div.recommend-movie-card-content:hover {
     z-index: 1123;
 }
 
-.modal-popup-container {
+.modal-popup-container, .download-modal-popup-container {
     position: relative;
     background-color: #f7542fcc;
     margin: auto;
@@ -999,7 +1003,7 @@ div.recommend-movie-card-content:hover {
     margin-bottom: 50px;
 }
 
-.modal-popup-header {
+.modal-popup-header, .download-modal-popup-header {
     background-color: #f7542fcc;
     color: black;
     font-family: monospace;
@@ -1014,7 +1018,7 @@ div.recommend-movie-card-content:hover {
     font-weight: bolder;
 }
 
-.modal-popup-header span {
+.modal-popup-header span, .download-modal-popup-header span {
     color: black;
     cursor: pointer;
 }
@@ -1054,6 +1058,7 @@ b.modal-popup-heading {
 
 .slider {
     position: fixed;
+    z-index: 1;
 }
 
 .slider-container {
@@ -1077,3 +1082,183 @@ b.modal-popup-heading {
 .slider-container a {
     color: white;
 }
+
+/*  Top Search  */
+
+.top-search {
+    width: 100%;
+}
+
+.top-search-container {
+    background: var(--primary-color);
+    margin-left: 10%;
+    margin-right: 10%;
+    border-radius: 5px;
+    margin-top: 10%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: white;
+    font-weight: bolder;
+}
+
+.top-search-container p {
+    font-size: 1.31em;
+    background: var(--primary-bg);
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 30%);
+}
+
+.top-search-container i {
+    font-size: 0.8em;
+}
+
+.top-search-container-span {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: auto;
+}
+
+.top-search-container span p {
+    margin: 7px;
+    background: var(--primary-bg);
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 30%);
+}
+
+.download-btn {
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    color: white;
+    background: var(--primary-color);
+    font-weight: bolder;
+    font-family: monospace;
+    font-size: 1.3em;
+    letter-spacing: 3px;
+    box-shadow: 0px 0px 20px 0px var(--primary-span-color);
+    cursor: pointer;
+}
+
+.download-btn-container {
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    padding: 10px;   
+}
+
+#scrollToTopBtn, #scrollToBottomBtn {
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 48px;
+    width: 48px;
+}
+
+.showBtn {
+    opacity: 1;
+    transform: translateY(0)
+}
+
+.scrollToTopBtn {
+    /* same general styles as before */
+    
+    /* place it at the bottom-right corner */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+  
+    /* keep it at the top of everything else */
+    z-index: 100;
+  
+    /* hide with opacity */
+    opacity: 0;
+  
+    /* also add a translate effect */
+    transform: translateY(100px);
+  
+    /* and a transition */
+    transition: all .5s ease
+  }
+
+  .movie-reviews-loader {
+    background-color: red;
+    width: 100%;
+  }
+
+  tr.loading, .loader-movie{
+    background-image: linear-gradient(to right, transparent 50%, rgba(0, 0, 0, .05) 50%);
+    background-size: 200% 100%;
+    animation: loading 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  
+  tr.loading td, div.recommend-movie-card-container .loader-movie {
+    opacity: .45;
+    pointer-events: none;
+  }
+  
+  @keyframes loading {
+    0% {
+      background-position: 0;
+    }
+    50% {
+      background-position: -30%;
+    }
+    80% {
+      background-position: -100%;
+    }
+    100% {
+      background-position: -200%;
+    }
+  }
+  
+  table {
+    font-family: sans-serif;
+    border-collapse: collapse;
+  }
+  
+  td,
+  th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  .movie-center {
+    align-items: center;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .download-modal-popup-links {
+    width: 100%; 
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    font-weight: bolder;
+    color: white;
+  }
+
+  .download-modal-filename, .download-modal-filesize {
+    border-right: 2px solid;
+    text-align: center;
+    align-items: center;
+  }
+
+  .download-modal-filename, .download-modal-filesize, .download-modal-magnetic-link {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }

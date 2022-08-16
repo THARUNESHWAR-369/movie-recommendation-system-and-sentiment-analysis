@@ -65,10 +65,13 @@ class UTILS:
             review_dict = {}
             for reviews in soup_result:
                 if reviews.string:
+                    #print(reviews.string)
                     reviews_list.append(reviews.string)
                     rev_pred = self.__classify_review(review = reviews.string)
+                    #print(rev_pred)
                     reviews_status.append(rev_pred)
                 review_dict = {reviews_list[i] : reviews_status[i] for i in range(len(reviews_status))}
+            #print("review_dict: ",review_dict)
             if len(review_dict) != 0:
                 return review_dict
         return None
@@ -77,7 +80,7 @@ class UTILS:
         moviename = movie_name.lower()
         similarity = self.__similarity()
         if moviename not in self.__DATA['movie_title'].unique():
-            raise Exception#("Sorry! The movie you requested is not in our database. Please check the spelling or try with some other movies")
+            return None
         
         movie_idx = self.__DATA.loc[self.__DATA['movie_title'] == moviename].index[0]
         movie_lst = []
@@ -89,6 +92,7 @@ class UTILS:
             movie_id = recom_lst[i][0]
             movie_lst.append(self.__DATA['movie_title'][movie_id])
         recom_movie_list = list(set(movie_lst))
+        print("recom_movie_list: ",recom_movie_list)
         return self.__getRecomMovieDetails(recom_movie_list=recom_movie_list)
     
     def __getRecomMovieDetails(self, recom_movie_list) -> list:

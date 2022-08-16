@@ -29,6 +29,10 @@ class FORMATDATA:
     def __formatStrings(self) -> list:
         __fs = {}
         for key in self.__MOVIE_KEYS[:-1]:
+            print(key)
+            print(self.__MAP_MOVIE_DATA, __fs)
+            if key not in self.__MAP_MOVIE_DATA:
+                continue
             __fs[key] = ", ".join([val for val in self.__MAP_MOVIE_DATA[key]])
         return __fs
     
@@ -121,14 +125,14 @@ class MOVIE_DB:
     def __FetchMovieDetails(self, id) -> None:
                 
         movie_result = requests.get(URLS.MOVIE_DETAIL_URL.value.format(id, os.environ.get("IMDB_API_KEY")))
-
+        #print(movie_result.json())
         if movie_result:
             result_movie_details = movie_result.json()
             #print("result_movie_details: ",result_movie_details)
 
             for md_keys, md_values in self.__MOVIE_DETAILS.items():
-
                 if md_values == list():
+                    #print(result_movie_details[md_keys], md_keys)
                     for md_details_dict in result_movie_details[md_keys]:
                         self.__MOVIE_DETAILS[md_keys].append(md_details_dict['name'])
                         self.__GET_MOVIE_DETAILS[md_keys] = self.__MOVIE_DETAILS[md_keys]
@@ -139,6 +143,7 @@ class MOVIE_DB:
         __CAST_COUNT = 0
         movie_cast_result = requests.get(URLS.MOVIE_CAST_URL.value.format(id, os.environ.get("IMDB_API_KEY")))
         if movie_cast_result:
+            #print("movie_cast_result: ",movie_cast_result)
             result_movie_cast = movie_cast_result.json()['cast'][:self.__MAX_CAST + __CAST_COUNT]
             for cast_details in result_movie_cast:
                 character_cast_dict = {"character":cast_details['character']}
@@ -161,7 +166,7 @@ class MOVIE_DB:
         recom_movie_result = requests.get(URLS.MOVIE_DETAIL_URL.value.format(id, os.environ.get("IMDB_API_KEY")))
         if recom_movie_result:
             result_recom_movie_details = recom_movie_result.json()
-
+            print("result_recom_movie_details: ",result_recom_movie_details)
             for recom_movie_keys in list(self.__MAP_RECOM_MOVIE_DATA.keys()):
                 if result_recom_movie_details[recom_movie_keys]:
                     if recom_movie_keys == "poster_path":
@@ -171,25 +176,29 @@ class MOVIE_DB:
 
     def getMovieDetails(self, isRecomdMovie=False) -> list:
         result = self.__TMDB_MOVIE.search(self.__MOVIE_NAME)
+        print(result)
         if result:
             result_details = result[0]
-            #print(result_details)
+            print(result_details)
             if result_details:
                 if isRecomdMovie==True:
                     self.__FetchRecomMovieDetails(id=result_details.id)
+                    print("self.__MAP_RECOM_MOVIE_DATA: ",self.__MAP_RECOM_MOVIE_DATA)
                     return None, None, self.__MAP_RECOM_MOVIE_DATA
 
                 else:
                     for gmd_keys, _ in self.__GET_MOVIE_DETAILS.items():
                         self.__GET_MOVIE_DETAILS[gmd_keys] = result_details[gmd_keys]
-                    #print('__GET_MOVIE_DETAILS: ',self.__GET_MOVIE_DETAILS)
+                    print('__GET_MOVIE_DETAILS: ',self.__GET_MOVIE_DETAILS)
                     self.__FetchMovieDetails(id=result_details.id)
                     self.__FetchCastDetails(id=result_details.id)  
                     self.__do_format()
                     #print('__GET_MOVIE_DETAILS: ',self.__GET_MOVIE_DETAILS)
+                    #print("self.__GET_MOVIE_DETAILS, self.__CAST_DETAILS, None    : ",self.__GET_MOVIE_DETAILS, self.__CAST_DETAILS, None)
                     return self.__GET_MOVIE_DETAILS, self.__CAST_DETAILS, None    
     
             isRecomdMovie = False
+        return None, None, None
                
     def __do_format(self) -> None:
         formatData = FORMATDATA(movie_keys=self.__MOVIE_KEYS, map_data=[self.__GET_MOVIE_DETAILS, self.__CAST_DETAILS, self.__MAP_MONTH])
