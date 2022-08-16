@@ -1262,3 +1262,8 @@ b.modal-popup-heading {
     text-align: center;
     justify-content: center;
   }
+
+  .download-modal-error-p {
+    width: -webkit-fill-available;
+    padding: 20px;
+  }
