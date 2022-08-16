@@ -67,6 +67,7 @@ def home():
 def getMovieDetails():
     if request.method == "POST":
         searchMovieName = request.form.get('movie-name')
+        print("searchMovieName: ",searchMovieName)
         __MOVIE_DETAILS, __CAST_DETAILS, _ = __UTILS.getMovieDetails(movie_name=searchMovieName)
         
         if (__MOVIE_DETAILS and __CAST_DETAILS) != None:
