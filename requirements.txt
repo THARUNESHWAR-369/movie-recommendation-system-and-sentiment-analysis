@@ -26,6 +26,7 @@ sklearn==0.0
 soupsieve==2.3.2.post1
 threadpoolctl==3.1.0
 tmdbv3api==1.7.7
+tpblite==0.8.0
 urllib3==1.26.11
 waitress==2.1.2
 Werkzeug==2.2.1
