@@ -32,7 +32,7 @@ class UTILS:
     __TRANSFORM_MODEL_PATH = PATHS.TRANSFORM_MODEL_PATH.value
 
     # Api key
-    __API_KEY = os.getenv('IMDB_API_KEY')
+    __API_KEY = "0935d725e4cae2bf1acd010b067db66e"
 
     __MAX_MOVIE_RECOMMEND = 10
     
