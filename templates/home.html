@@ -762,6 +762,8 @@
                     download_modal_popup_links.classList.add("download-modal-popup-links");
 
                     if (data['status']==true) {
+
+                        document.getElementById('download-modal-popup-content').innerHTML = "";
                         let download_modal_filename = document.createElement('div');
                         let download_modal_filename_p = document.createElement('p')
 
@@ -798,11 +800,14 @@
                     }
                     else {
                         // no torrent
+                        console.log("no torrent")
+                        document.getElementById('download-modal-popup-content').innerHTML = "";
                         let download_modal_popup_links_p = document.createElement('p');
 
+                        download_modal_popup_links_p.classList.add("download-modal-error-p");
                         download_modal_popup_links_p.textContent = data['error-msg']
 
-                        //download_modal_popup_links.appendChild(download_modal_popup_links_p);
+                        download_modal_popup_links.appendChild(download_modal_popup_links_p);
                         document.getElementById('download-modal-popup-content').appendChild(download_modal_popup_links);
                     }
                 }
