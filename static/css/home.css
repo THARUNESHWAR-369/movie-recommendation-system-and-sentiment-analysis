@@ -876,7 +876,7 @@ div.recommend-movie-card-content:hover {
     max-width: 50px;
     transition: .2s ease-in-out;
     padding: 10px 15px;
-    min-width: 95%;
+    min-width: 100%;
 }
 
 .autoComplete_highlighted {
