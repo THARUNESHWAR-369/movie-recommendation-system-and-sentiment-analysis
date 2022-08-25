@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import jsonify
 
 # import from constant
 from constants.utils import UTILS
@@ -22,43 +23,14 @@ __UTILS = UTILS()
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
-    
-    # Get all Movie names
     __MOVIE_NAME_LIST = __UTILS.getMovieNames()
-    
     # Initialize variables
     __STATUS = False
     __ERROR = None
     
     # Get Top Search results
     __TOP_SEARCH = __UTILS.getTopSearch()
-    
-    """if request.method == "POST":
-        print(request.form.to_dict())
-        searchMovieName = request.form.get('movie-name')
-        
-        try:
-            #__MOVIE_DETAILS, __CAST_DETAILS, _ = __UTILS.getMovieDetails(movie_name=searchMovieName)
-            __REVIEW_DICT =None# __UTILS.scrap_review(imdb_id = __MOVIE_DETAILS['imdb_id'])
-            #print("__REIRE_DICT: ",__REVIEW_DICT)
-            __RECOMMEND_MOVIE_DETAILS_LIST = None if type(__UTILS.recommendMovie(movie_name=searchMovieName)) == str else __UTILS.recommendMovie(movie_name=searchMovieName)
-            print("__RECOMMEND_MOVIE_DETAILS_LIST: ",__RECOMMEND_MOVIE_DETAILS_LIST)
-            __TOP_SEARCH = None
-            __STATUS = True
-            
-            return {
-                'status':__STATUS,
-                #"movie-details":__MOVIE_DETAILS ,
-                #'cast-details':__CAST_DETAILS,
-                "reviews-details":__REVIEW_DICT,
-                "recommend-movies":__RECOMMEND_MOVIE_DETAILS_LIST
-                }
-        except Exception as e:
-            print("app error: ",e)
-            __STATUS = False
-            return {
-                "status":__STATUS
-            }"""
+
     
     return render_template('home.html',error=__ERROR, movieNamesList=__MOVIE_NAME_LIST, status=__STATUS, topSearch=__TOP_SEARCH)
 
@@ -71,17 +43,17 @@ def getMovieDetails():
         __MOVIE_DETAILS, __CAST_DETAILS, _ = __UTILS.getMovieDetails(movie_name=searchMovieName)
         
         if (__MOVIE_DETAILS and __CAST_DETAILS) != None:
-            return {
+            return jsonify({
             'status':True,
             "movie-details":__MOVIE_DETAILS ,
             'cast-details':__CAST_DETAILS,
-            }
-        return {
+            })
+        return jsonify({
             "status":False
-        }
-    return {
+        })
+    return jsonify({
         "status":False
-    }
+    })
 
 
 @app.route('/getMovieReviews', methods=['POST', 'GET'])
@@ -89,15 +61,13 @@ def getMovieReviews():
     if request.method == "POST":
         movie_imdb_id = request.form.get('movie_imdb_id')
         __REVIEW_DICT =  __UTILS.scrap_review(imdb_id = movie_imdb_id)
-        __get = True
-        return {
+        return jsonify({
             'status':True,
             "reviews-details":__REVIEW_DICT,
-        }
-    return {
+        })
+    return jsonify({
         "status":False
-    }
-
+    })
 
 @app.route('/getRecommendedMovies', methods=['POST', 'GET'])
 def getRecommendedMovies():
@@ -107,13 +77,13 @@ def getRecommendedMovies():
         __RECOMMEND_MOVIE_DETAILS_LIST = __UTILS.recommendMovie(movie_name=searchMovieName)
         print("__RECOMMEND_MOVIE_DETAILS_LIST: ",__RECOMMEND_MOVIE_DETAILS_LIST)
         __get = True
-        return {
+        return jsonify({
             'status':True,
             "recommend-movies":__RECOMMEND_MOVIE_DETAILS_LIST,
-        }
-    return {
+        })
+    return jsonify({
         "status":False
-    }
+    })
     
 @app.route("/getTorrents", methods=["POST", "GET"])
 def getTorrent():
@@ -123,21 +93,33 @@ def getTorrent():
         torrent = torrents.getBestTorrent(min_seeds=30, min_filesize='500 MiB', max_filesize='4 GiB')
         try:
             print(torrent.title, torrent.filesize, torrent.url)
-            return {
+            return jsonify({
                 "status":True,
                 "torrent-title":torrent.title,
                 "torrent-filesize":torrent.filesize,
                 "torrent-magnetlink":torrent.magnetlink
-            }
+            })
         except:
-            return {
+            return jsonify({
                 "status":False,
                 "error-msg":"No torrent found..."
-            }
-    return {
+            })
+    return jsonify({
         "status":False,
         "error-msg":"No torrent found..."
-    }
+    })
+    
+@app.route("/get_movies_name", methods={"POST", "GET"})
+def getMoviesName():
+    if request.method== "GET":
+        __MOVIE_NAME_LIST = __UTILS.getMovieNames()
+        return jsonify({
+            "status":True,
+            "movieNamesList":__MOVIE_NAME_LIST
+        })
+    return jsonify({
+        'status':False
+    })
 
 
 if __name__ == '__main__':
