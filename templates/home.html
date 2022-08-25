@@ -256,7 +256,7 @@
 
         $(window).scroll(function() {
             $("div.movie-cast").each(function() {
-            // console.log(!firedEvents.includes(this), $(window).scrollTop(), $(this).offset().bottom)
+            // //console.log(!firedEvents.includes(this), $(window).scrollTop(), $(this).offset().bottom)
                 if (!firedEvents.includes(this) && $(window).scrollTop() > $(this).offset().top) {
                 firedEvents.push(this);
                 $("#col-title").show()
@@ -268,7 +268,7 @@
                     success: function (data) {
                         $("#loader").fadeOut();
                         $("#removeTR").hide()
-                        console.log(data)
+                        //console.log(data)
                         if (data['status'] == true) {
             
                             //*  Reviews *
@@ -276,18 +276,18 @@
             
                         }
                         else {
-                            console.log("no reviews")
+                            //console.log("no reviews")
                             $("#removeTR").show()
                         }
                         }
                     });
                 }
             });
-            console.log(firedEvents)
+            //console.log(firedEvents)
             $("div.movie-reviews").each(function() {
                     if (!firedEvents.includes(this) && $(window).scrollTop() > $(this).offset().top) {
                     firedEvents.push(this);
-                    console.log(movieData)
+                    //console.log(movieData)
 
                     $.ajax({
                         type: "post",
@@ -296,7 +296,7 @@
                         dataType: "json",
                         success: function (data) {
                             $("#loader").fadeOut()
-                            console.log(data)
+                            //console.log(data)
                             if (data['status'] == true) {
                                 showRecommendMoviesCards(data['recommend-movies'])                
                             }
@@ -329,7 +329,7 @@
                 success: function (data) {
                     $("#loader").fadeOut();
                     $("#movie-card").css('display', 'block')
-                    console.log(data)
+                    //console.log(data)
                     if (data['status'] == true) {
 
                         // Null the variables
@@ -395,7 +395,7 @@
                     }
                     else {
                          // show top search
-                         console.log("Not fond")
+                         //console.log("Not fond")
                          $("#top-search").show();
                          $("#errorTag").css('display', 'block'); 
                          $("#errorTag").text("*"+movie_name+" Movie not found in our database.."); 
@@ -511,7 +511,7 @@
         }
 
         function showReviews(reviews) {
-            //console.log(reviews);
+            ////console.log(reviews);
             let review_tbody = document.getElementById('review-tbody');
 
             
@@ -581,7 +581,7 @@
             modal_popup_header_p = document.createElement('p');
             modal_popup_header_span = document.createElement('span');
 
-            //console.log("castData[i]['name']: "+title.replaceAll(/[`~!@#$%^&*()_|+\-=?;:'",. <>\{\}\[\]\\\/]/gi, '-'));
+            ////console.log("castData[i]['name']: "+title.replaceAll(/[`~!@#$%^&*()_|+\-=?;:'",. <>\{\}\[\]\\\/]/gi, '-'));
 
             cast_modal_popup_container_title.classList.add('cast-modal-popup-container-title');
 
@@ -601,7 +601,7 @@
             modal_popup_header.appendChild(modal_popup_header_p);
             modal_popup_header.appendChild(modal_popup_header_span)
             cast_modal_popup_container_title.appendChild(modal_popup_content);
-            //console.log("cast_modal_popup_keys: ", cast_modal_popup_keys, title.replaceAll(/[`~!@#$%^&*()_|+\-=?;:'",. <>\{\}\[\]\\\/]/gi, '-'))
+            ////console.log("cast_modal_popup_keys: ", cast_modal_popup_keys, title.replaceAll(/[`~!@#$%^&*()_|+\-=?;:'",. <>\{\}\[\]\\\/]/gi, '-'))
 
             for (var i=0; cast_modal_popup_keys.length > i; i++) {
                 let p = document.createElement('p')
@@ -627,12 +627,12 @@
         }
 
         function showCastCards(castData) {
-            //console.log(castData);
+            ////console.log(castData);
 
             let main_container = document.getElementById("movie-cast-cards-row");
             for (var i=0; castData.length > i; i++) {
 
-                //console.log(castData[i]['character']);
+                ////console.log(castData[i]['character']);
                 
                 let movie_cast_card = document.createElement('div');
                 
@@ -748,7 +748,7 @@
                 data: {"movie-name":movieData['title']},
                 dataType: "json",
                 success: function (data) {
-                    console.log(data);
+                    //console.log(data);
       
                     let download_modal_popup_links = document.createElement('div');
                     download_modal_popup_links.id = "download-modal-popup-links";
@@ -793,7 +793,7 @@
                     }
                     else {
                         // no torrent
-                        console.log("no torrent")
+                        //console.log("no torrent")
                         document.getElementById('download-modal-popup-content').innerHTML = "";
                         let download_modal_popup_links_p = document.createElement('p');
 
@@ -833,11 +833,14 @@
 
     <script>
         function callGetMovieNames() {
+            try{
+                $("#movie_list").remove();
+            }catch(e){console.log(e)}
             $.ajax({
                 type: "get",
                 url: "/get_movies_name",
                 success: function (data) {
-                    console.log(data)
+                    //console.log(data)
                     let films = data['movieNamesList']
                     const autoCompleteJS = new autoComplete({ 
                         selector: "#search-movie",
