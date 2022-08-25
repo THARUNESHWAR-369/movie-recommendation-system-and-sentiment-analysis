@@ -315,10 +315,19 @@
 
 
         function postMovie(movie_name){
+
+            try{
+                $("#movie_list").remove();
+                $("#movie_list").empty();
+                console.log("removed ul")
+            }catch(e){console.log(e)}
+
             $("#errorTag").css('display', 'none'); 
             $("#loader").fadeIn();
             $("#movie_list").hide();
             $("#movie-card").css('display', 'block')
+
+
             
 
             $.ajax({
@@ -856,6 +865,11 @@
                         resultsList: {
                             render: true,
                             container: source => {
+                                try{
+                                    $("#movie_list").remove();
+                                    $("#movie_list").empty();
+                                    console.log("removed ul")
+                                }catch(e){console.log(e)}
                                 source.setAttribute("id", "movie_list");
                                 $("#errorTag").css('display', 'none');
                             },
@@ -872,6 +886,11 @@
                             element: "li"
                         },
                         noResults: () => {
+                            try{
+                                $("#movie_list").remove();
+                                $("#movie_list").empty();
+                                console.log("removed ul")
+                            }catch(e){console.log(e)}
                             const result = document.createElement("li");
                             result.setAttribute("class", "no_result");
                             result.setAttribute("tabindex", "1");
@@ -880,6 +899,11 @@
                             $("#errorTag").text("*"+result.textContent+", \movie not found in the database..");
                         },
                         onSelection: feedback => {
+                            try{
+                                $("#movie_list").remove();
+                                $("#movie_list").empty();
+                                console.log("removed ul")
+                            }catch(e){console.log(e)}
                             document.getElementById('search-movie').value = feedback.selection.value;
                             postMovie(feedback.selection.value);
                         },
