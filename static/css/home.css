@@ -3,6 +3,7 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 :root {
@@ -1267,3 +1268,11 @@ b.modal-popup-heading {
     width: -webkit-fill-available;
     padding: 20px;
   }
+
+
+  .autoComplete_wrapper {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
