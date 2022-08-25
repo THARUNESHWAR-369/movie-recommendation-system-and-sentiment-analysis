@@ -835,6 +835,7 @@
         function callGetMovieNames() {
             try{
                 $("#movie_list").remove();
+                $("#movie_list").empty();
                 console.log("removed ul")
             }catch(e){console.log(e)}
             $.ajax({
