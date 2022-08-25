@@ -130,6 +130,7 @@
                     <div class="movie-poster-card">
                         <!-- movie poster -->
                         <img src="" class="movie-poster-img" id="movie-poster-img">
+                        <div class="overlay" style="display: none;"></div>
                         <div class="movie-card-i">
                             <span id="movie-name"></span>
                         </div>
@@ -328,6 +329,11 @@
             $("#movie-card").css('display', 'block')
 
 
+            $("#movie-poster-img").attr('src', '');
+
+            $(".overlay").css('display', 'block');
+
+
             
 
             $.ajax({
@@ -393,6 +399,7 @@
                         //* Movie details 
                         $("#movie-name").text(data['movie-details']['title']);
                         $("#movie-poster-img").attr('src', data['movie-details']['poster_path'])
+                        $(".overlay").css('display', 'none');
 
                         //* Movie Details modal popup 
                         movieData = data['movie-details'];
