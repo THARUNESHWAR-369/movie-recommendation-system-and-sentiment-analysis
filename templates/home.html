@@ -16,10 +16,9 @@
     <!--  JQuery  -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <script type="text/javascript">
-        var films = {{ movieNamesList|tojson }};
-        $("#loader").fadeOut()
-    </script>
+    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.min.css">-->
+
+    
 </head>
 <body>
 
@@ -85,7 +84,7 @@
     <div class="search-bar" id="search-bar">
         <div class="serach-bar-container">
             <div class="input-filed">
-                <input id="search-movie" type="text" placeholder="Search movie" autocomplete="off">
+                <input onclick="callGetMovieNames();" id="search-movie" type="text" placeholder="Search movie" autocomplete="off">
             </div>
             <p id="errorTag" style="display: none;"></p>
             <div class="search-button">
@@ -231,12 +230,6 @@
         <p>tharuneshwar s</p>
         <span><a href="https://github.com/THARUNESHWAR-369" target="_blank"><i class="fa-brands fa-github"></i></a></span>
     </div>
-
-
-    <!--  Autocomplete  -->
-    <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/autocomplete.js')}}"></script>
-
 
     <script>
 
@@ -825,5 +818,75 @@
     </script>
 
     <script src="{{ url_for('static', filename='js/scrollBtn.js') }}"></script>
+
+    <script type="text/javascript">
+        //var films = {{ movieNamesList|tojson }};
+        
+        $("#loader").fadeOut()
+    </script>
+
+    <!--  Autocomplete  -->
+    -<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js"></script>
+
+    <!--<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>-->
+    <!--<script type="text/javascript" src="{{url_for('static', filename='js/autocomplete.js')}}"></script>-->
+
+    <script>
+        function callGetMovieNames() {
+            $.ajax({
+                type: "get",
+                url: "/get_movies_name",
+                success: function (data) {
+                    console.log(data)
+                    let films = data['movieNamesList']
+                    const autoCompleteJS = new autoComplete({ 
+                        selector: "#search-movie",
+                        data: {
+                            src: films,
+                            cache: true,
+                        },
+                        threshold: 1,
+                        debounce: 100,
+                        searchEngine: "strict",
+                        resultsList: {
+                            render: true,
+                            container: source => {
+                                source.setAttribute("id", "movie_list");
+                                $("#errorTag").css('display', 'none');
+                            },
+                            destination: document.querySelector("#search-movie"),
+                            position: "afterend",
+                            element: "ul"
+                        },
+                        maxResults: 6,
+                        highlight: true,
+                        resultItem: {
+                            content: (data, source) => {
+                                source.innerHTML = data.match;
+                            },
+                            element: "li"
+                        },
+                        noResults: () => {
+                            const result = document.createElement("li");
+                            result.setAttribute("class", "no_result");
+                            result.setAttribute("tabindex", "1");
+                            result.innerHTML = "No Suggestion";
+                            $("#errorTag").css('display', 'block');
+                            $("#errorTag").text("*"+result.textContent+", \movie not found in the database..");
+                        },
+                        onSelection: feedback => {
+                            document.getElementById('search-movie').value = feedback.selection.value;
+                            postMovie(feedback.selection.value);
+                        },
+                     });
+                }
+            });
+    
+        }        
+        //callGetMovieNames()
+    </script>
+    
+
+
 </body>
 </html>
