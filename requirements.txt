@@ -11,3 +11,4 @@ scipy
 sklearn
 tmdbv3api
 urllib3
+tpblite
